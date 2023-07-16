@@ -46,7 +46,7 @@ const parseForm = async (
       },
     });
 
-    form.parse(req, function (err:any, fields:any, files:any) {
+    form.parse(req, function (err:unknown, fields:unknown, files:unknown) {
       if (err) reject(err);
       else resolve({ fields, files });
     });

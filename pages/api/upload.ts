@@ -26,17 +26,21 @@ const handler = async (
 
     const file = files.media;
     let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
-    let txts: string = "";
      if(Array.isArray(file)){
       for(let i = 0; i < file.length; i ++){
         pdfParse(file[i].filepath).then(result => {
-          txts += result
+          console.log("--------------------------------------------------------- from here (array) ---------------------------------------------------------");
+          console.log(result);
+          // txts += result
         })
       }
      }  else {
-      console.log(pdfParse(file.filepath))
+      // Note that even a single file is not called here ... some other reason
+      let t = await pdfParse(file.filepath);
+      console.log("--------------------------------------------------------- from here ---------------------------------------------------------");
+      console.log(t);
      }
-    console.log(txts);
+    // console.log(txts);
 
     res.status(200).json({
         data: {
