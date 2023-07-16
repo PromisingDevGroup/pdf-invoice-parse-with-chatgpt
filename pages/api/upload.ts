@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parseForm, formidableErrors } from "../../lib/parse-form";
 import { pdfParse } from "@/lib/pdf-parse";
+import getAIResponse from "@/lib/chatgptresponse";
+
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<{
@@ -31,6 +33,7 @@ const handler = async (
         pdfParse(file[i].filepath).then(result => {
           console.log("--------------------------------------------------------- from here (array) ---------------------------------------------------------");
           console.log(result);
+          getAIResponse("how can I hep you today?")
           // txts += result
         })
       }
