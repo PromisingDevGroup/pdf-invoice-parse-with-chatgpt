@@ -1,7 +1,7 @@
 import React from 'react'
 import { nanoid } from "nanoid"
 type Props = {
-    data: unknown[]
+    data: string[]
 }
 
 const InformationTable = (props: Props) => {

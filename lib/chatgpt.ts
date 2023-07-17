@@ -7,7 +7,7 @@ import chatgptapikey from "./chatgptapikey";
 
 
 
-const getAIResponse = async (prompt: unknown) => {
+const getAIResponse = async (prompt: string) => {
     const configuration = new Configuration({
         apiKey: chatgptapikey,
       });
@@ -23,7 +23,9 @@ const getAIResponse = async (prompt: unknown) => {
         {"role": "user", "content": prompt}
       ],
     });
-    return completion.data.choices[0].message.content
+    const choices = completion.data.choices[0]//.message.content
+    const message = choices.message
+    return message?.content
 
     // const completion = await openai.createChatCompletion({
     //     model: "gpt-3.5-turbo",

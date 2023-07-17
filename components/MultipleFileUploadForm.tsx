@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ChangeEvent, useState, useEffect } from "react";
 import InformationTable from "./InformationTable";
 import Loading from "./Loading";
@@ -7,7 +6,7 @@ const MultipleFileUploadForm = () => {
   const [statusTxt, setStatusTxt] = useState("Please start!")
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<unknown[]>([]);
+  const [tableData, setTableData] = useState<string[]>([]);
   const [prompts, setPrompts] = useState<string[]>([]);
   useEffect(() => {
     if (prompts.length > 0) {

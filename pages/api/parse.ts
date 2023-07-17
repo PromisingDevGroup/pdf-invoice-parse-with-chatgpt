@@ -23,9 +23,8 @@ export default async function handler(
         const { body } = req;
         const prompt = body;
         let aires = await getAIResponse(prompt);
-        let aa:string = aires;
-        res.status(200).json({ parsed: aa, error: null })
-    } catch (error) {
+        res.status(200).json({ parsed: aires||null, error: null })
+    } catch (error:any) {
         console.log(error.message);
         res.status(500).json({ parsed: null, error: "Error"})
     }

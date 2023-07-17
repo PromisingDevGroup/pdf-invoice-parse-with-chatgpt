@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parseForm, formidableErrors } from "../../lib/parse-form";
 import { pdfParse } from "@/lib/pdf-parse";
-import makePrompt from "@/lib/makeprompt";
+import makePrompt from "@/lib/makePrompt";
 
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<{
     data: {
-      url: string[];
+      url: string[]|false;
       parsedResults: unknown[];
     } | null;
     error: string | null;
@@ -26,7 +26,7 @@ const handler = async (
   try {
     const { fields, files } = await parseForm(req);
     const file = files.media;
-    let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
+    let url = Array.isArray(file) && file.map((f) => f.filepath);
     console.log("Number of files to parse: ", files.length);
     if (Array.isArray(file)) {
       let parsedResults: unknown[] = [];
