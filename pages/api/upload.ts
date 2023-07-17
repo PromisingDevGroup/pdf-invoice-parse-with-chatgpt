@@ -29,44 +29,59 @@ const handler = async (
     const { fields, files } = await parseForm(req);
     const file = files.media;
     let url = Array.isArray(file) ? file.map((f) => f.filepath) : file.filepath;
+    console.log("Number of files to parse: ", files.length)
      if(Array.isArray(file)){
       let parsedResults: unknown[] = [];
-      for(let i = 0; i <= file.length; i ++){
-        if(i == file.length){
-          //
-          res.status(200).json({
-            data: {
-              url,
-              parsedResults
-            },
-            error: null,
-        });
-        }
-        pdfParse(file[i].filepath).then(result => {
-          let prompt = makePrompt(result);
-          getAIResponse(prompt).then(res => {
-            // console.log("Chat Gpt response", res);
-            parsedResults.push(res);
+      for(let i = 0; i < file.length; i ++){
+        // if(i == file.length){
+        //   //
+        //   // console.log("sending result");
+        //   // res.status(200).json({
+        //   //   data: {
+        //   //     url,
+        //   //     parsedResults
+        //   //   },
+        //   //   error: null,
+        //   // });
+        // } else {
+          console.log("parsing pdf files")
+          pdfParse(file[i].filepath).then(result => {
+            console.log("parse success, sending to AI");
+            let prompt = makePrompt(result);
+            let j = 0;
+            getAIResponse(prompt).then(result => {
+              console.log("Got AI response\n", result)
+              parsedResults.push(result);
+              j ++;
+              if(i == j){
+                res.status(200).json({
+                  data: {
+                    url,
+                    parsedResults
+                  },
+                  error: null,
+                });
+              }
+            })
+            
           })
-          
-        })
+        // }
+        
       }
      }  else {
-      // Note that even a single file is not called here ... some other reason
-      // let t = await pdfParse(file.filepath);
-      
-      // console.log(t);
+      // Only multiple file is implemented
      }
 
     
   } catch (e) {
-    if (e instanceof formidableErrors) {
-      console.log(e);
-      res.status(400).json({ data: null, error: "Error Occured" });
-    } else {
-      console.error(e);
-      res.status(500).json({ data: null, error: "Internal Server Error" });
-    }
+    console.log(e)
+    // if (e instanceof formidableErrors) {
+    //   console.log(e);
+    //   res.status(400).json({ data: null, error: "Error Occured" });
+    // } else {
+    //   console.error(e);
+    //   res.status(500).json({ data: null, error: "Internal Server Error" });
+    // }
   }
   
 }

@@ -60,7 +60,7 @@ const MultipleFileUploadForm = () => {
           validFiles.map((validFile) => URL.createObjectURL(validFile))
         ); // we will use this to show the preview of the images
         //set table data
-        if(parsedResults.length > 0){
+        if(parsedResults && parsedResults.length > 0){
           let tmpdata = [];
           for(let i =0; i < parsedResults.length; i ++){
             let current = parsedResults[i];
@@ -68,6 +68,7 @@ const MultipleFileUploadForm = () => {
             if(currentSpecs.length == 8){
               tmpdata.push(currentSpecs.map((str:string) => str.substring(str.indexOf(":") + 1)))
             } else {
+              console.log(currentSpecs)
               // something is missing from the table
             }
           }
@@ -77,7 +78,7 @@ const MultipleFileUploadForm = () => {
         fileInput.type = "text";
         fileInput.type = "file";
   
-        console.log("Files were uploaded successfylly:", data);
+        console.log("Operation Success:", data);
       } catch (error) {
         console.error(error);
         alert("Sorry! something went wrong.");
