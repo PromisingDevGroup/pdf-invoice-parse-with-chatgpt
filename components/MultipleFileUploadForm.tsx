@@ -43,9 +43,12 @@ const MultipleFileUploadForm = () => {
               setAlertOpen(true);
               setIsLoading(false);
             }
+          } else if(data.error) {
+            setStatusTxt(data.error)
+            setAlertOpen(true);
+            setIsLoading(false);
           } else {
-            setStatusTxt("Error Occured")
-            // alert("Something went wrong!")
+            setStatusTxt("Something went wrong while interacting with OpenAI api")
             setAlertOpen(true);
             setIsLoading(false);
           }
@@ -62,14 +65,12 @@ const MultipleFileUploadForm = () => {
     const fileInput = e.target;
 
     if (!fileInput.files) {
-      // alert("No files were chosen");
       setStatusTxt("No files were chosen");
       setAlertOpen(true);
       return;
     }
 
     if (!fileInput.files || fileInput.files.length === 0) {
-      // alert("Files list is empty");
       setStatusTxt("Files list is empty");
       setAlertOpen(true);
       return;
@@ -80,7 +81,6 @@ const MultipleFileUploadForm = () => {
     for (let i = 0; i < fileInput.files.length; i++) {
       const file = fileInput.files[i];
       if (file.type !== "application/pdf") {
-        // alert(`File with idx: ${i} is invalid`);
         setStatusTxt(`File with idx: ${i} is invalid`);
         setAlertOpen(true);
         continue;
@@ -90,7 +90,7 @@ const MultipleFileUploadForm = () => {
     }
 
     try {
-      setStatusTxt("uploading and converting pdf to text")
+      setStatusTxt("Uploading and converting pdf to text")
       var formData = new FormData();
       validFiles.forEach((file) => formData.append("media", file));
 
@@ -112,11 +112,12 @@ const MultipleFileUploadForm = () => {
 
       if (error || !data) {
         // alert(error || "Sorry! something went wrong.");
-        setStatusTxt(error || "Sorry! something went wrong.");
+        setStatusTxt(error || "Sorry! Something went wrong while uploading and converting.");
         setAlertOpen(true);
         return;
       }
-      setStatusTxt("pdf loaded and parsed")
+      setStatusTxt("Pdf loaded and parsed!")
+      setAlertOpen(true);
 
       setPreviewUrls(
         validFiles.map((validFile) => URL.createObjectURL(validFile))

@@ -25,8 +25,12 @@ export default async function handler(
         let aires = await getAIResponse(prompt);
         res.status(200).json({ parsed: aires||null, error: null })
     } catch (error:any) {
-        console.log(error.message);
-        res.status(500).json({ parsed: null, error: "Error"})
+        let errorMsg = error.message;
+        console.log(errorMsg);
+        if(errorMsg.includes("401")){
+            errorMsg = "OpenAI Api Token is incorrect!"
+        }
+        res.status(500).json({ parsed: null, error: errorMsg})
     }
   
 }
