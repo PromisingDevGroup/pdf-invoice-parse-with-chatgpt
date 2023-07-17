@@ -45,14 +45,14 @@ const handler = async (
         //   // });
         // } else {
           console.log("parsing pdf files")
-          pdfParse(file[i].filepath).then(result => {
+          await pdfParse(file[i].filepath).then(result => {
             console.log("parse success, sending to AI");
             let prompt = makePrompt(result);
             let j = 0;
             getAIResponse(prompt).then(result => {
-              console.log("Got AI response\n", result)
+              console.log("Got AI response\n---------------\n", result)
               parsedResults.push(result);
-              j ++;
+              console.log(i, j, parsedResults);
               if(i == j){
                 res.status(200).json({
                   data: {
@@ -62,6 +62,8 @@ const handler = async (
                   error: null,
                 });
               }
+              
+              j ++;
             })
             
           })

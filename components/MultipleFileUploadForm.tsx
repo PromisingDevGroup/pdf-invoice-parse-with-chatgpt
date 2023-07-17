@@ -43,12 +43,11 @@ const MultipleFileUploadForm = () => {
 
       const {
         data,
-        parsedResults,
         error,
       }: {
         data: {
-          url: string | string[];
-          parsedResults: [];
+          url: string | string[];    
+          parsedResults: string[];      
         } | null;
         error: string | null;
       } = await res.json();
@@ -62,10 +61,11 @@ const MultipleFileUploadForm = () => {
         validFiles.map((validFile) => URL.createObjectURL(validFile))
       ); // we will use this to show the preview of the images
       //set table data
-      if (parsedResults && parsedResults.length > 0) {
+      console.log(data.parsedResults);
+      if (data.parsedResults && data.parsedResults.length > 0) {
         let tmpdata = [];
-        for (let i = 0; i < parsedResults.length; i++) {
-          let current = parsedResults[i];
+        for (let i = 0; i < data.parsedResults.length; i++) {
+          let current = data.parsedResults[i];
           let currentSpecs = current.split("\n");
           if (currentSpecs.length == 8) {
             tmpdata.push(currentSpecs.map((str: string) => str.substring(str.indexOf(":") + 1)))
@@ -97,7 +97,10 @@ const MultipleFileUploadForm = () => {
         {previewUrls.length > 0 ? (
           <>
             <button
-              onClick={() => setPreviewUrls([])}
+              onClick={() => {
+                setPreviewUrls([])
+                setTableData([])
+              }}
               className="mb-3 text-sm font-medium text-gray-500 transition-colors duration-300 hover:text-gray-900"
             >
               Clear Previews
