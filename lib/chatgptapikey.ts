@@ -1,2 +1,2 @@
-const chatgptapikey = "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"
+const chatgptapikey = "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"
 export default chatgptapikey

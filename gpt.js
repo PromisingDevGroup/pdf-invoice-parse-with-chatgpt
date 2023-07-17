@@ -13,7 +13,7 @@ const models = [
 ]
 try {
     const configuration = new Configuration({
-        apiKey: "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",
+        apiKey: "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 ",//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   //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
       });
       const openai = new OpenAIApi(configuration);
       readline.question("Available ChatGPT models are:\n0. gpt-3.5-turbo\n1. text-ada-001\n2. text-babbage-001\n3. text-curie-001\n4. text-davinci-003\nWhich model(0-4)?", name=>{
