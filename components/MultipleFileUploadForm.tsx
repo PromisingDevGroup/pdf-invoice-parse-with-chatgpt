@@ -9,7 +9,7 @@ const MultipleFileUploadForm = () => {
   const [statusTxt, setStatusTxt] = useState("Please start!")
   const [alertOpen, setAlertOpen] = useState(true);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<string[][]>([]);
   const [prompts, setPrompts] = useState<string[]>([]);
   useEffect(() => {
     if(alertOpen === true){
@@ -23,7 +23,7 @@ const MultipleFileUploadForm = () => {
       setIsLoading(true);
       setStatusTxt("Sending Prompts to AI")
       setAlertOpen(true);
-      let tmp:string[] = [];
+      let tmp:string[][] = [];
       const fetachData = async() => {
         for(let i =0; i < prompts.length; i++){
           const res = await fetch("/api/parse", {

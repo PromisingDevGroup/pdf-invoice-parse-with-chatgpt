@@ -3,7 +3,7 @@ import { nanoid } from "nanoid"
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 
 type Props = {
-    data: string[]
+    data: string[][]
 }
 
 const InformationTable = (props: Props) => {
