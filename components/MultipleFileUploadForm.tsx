@@ -1,17 +1,28 @@
 import { ChangeEvent, useState, useEffect } from "react";
 import InformationTable from "./InformationTable";
 import Loading from "./Loading";
+import AlertComponent from "./AlertComponent"
+import {  Button } from "@material-tailwind/react";
+
 const MultipleFileUploadForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusTxt, setStatusTxt] = useState("Please start!")
-
+  const [alertOpen, setAlertOpen] = useState(true);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [tableData, setTableData] = useState<string[]>([]);
   const [prompts, setPrompts] = useState<string[]>([]);
   useEffect(() => {
+    if(alertOpen === true){
+      setTimeout(() => {
+        setAlertOpen(false);
+      }, 5000)
+    }
+  }, [alertOpen])
+  useEffect(() => {
     if (prompts.length > 0) {
       setIsLoading(true);
-      setStatusTxt("sending prompts to AI")
+      setStatusTxt("Sending Prompts to AI")
+      setAlertOpen(true);
       let tmp:string[] = [];
       const fetachData = async() => {
         for(let i =0; i < prompts.length; i++){
@@ -29,11 +40,13 @@ const MultipleFileUploadForm = () => {
             if (tmp.length === prompts.length) {
               setTableData(tmp);
               setStatusTxt("Got the result")
+              setAlertOpen(true);
               setIsLoading(false);
             }
           } else {
             setStatusTxt("Error Occured")
-            alert("Something went wrong!")
+            // alert("Something went wrong!")
+            setAlertOpen(true);
             setIsLoading(false);
           }
         }
@@ -43,25 +56,22 @@ const MultipleFileUploadForm = () => {
     }
   }, [prompts])
 
-  const getAIData = () => {
-    if(prompts.length < 1){
-      alert("No prompts to send")
-      return;
-    }
-
-  }
 
   const onFilesUploadChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
     const fileInput = e.target;
 
     if (!fileInput.files) {
-      alert("No files were chosen");
+      // alert("No files were chosen");
+      setStatusTxt("No files were chosen");
+      setAlertOpen(true);
       return;
     }
 
     if (!fileInput.files || fileInput.files.length === 0) {
-      alert("Files list is empty");
+      // alert("Files list is empty");
+      setStatusTxt("Files list is empty");
+      setAlertOpen(true);
       return;
     }
 
@@ -70,7 +80,9 @@ const MultipleFileUploadForm = () => {
     for (let i = 0; i < fileInput.files.length; i++) {
       const file = fileInput.files[i];
       if (file.type !== "application/pdf") {
-        alert(`File with idx: ${i} is invalid`);
+        // alert(`File with idx: ${i} is invalid`);
+        setStatusTxt(`File with idx: ${i} is invalid`);
+        setAlertOpen(true);
         continue;
       }
 
@@ -99,7 +111,9 @@ const MultipleFileUploadForm = () => {
       } = await res.json();
 
       if (error || !data) {
-        alert(error || "Sorry! something went wrong.");
+        // alert(error || "Sorry! something went wrong.");
+        setStatusTxt(error || "Sorry! something went wrong.");
+        setAlertOpen(true);
         return;
       }
       setStatusTxt("pdf loaded and parsed")
@@ -108,22 +122,7 @@ const MultipleFileUploadForm = () => {
         validFiles.map((validFile) => URL.createObjectURL(validFile))
       ); // we will use this to show the preview of the images
       //set table data
-      setPrompts(data.parsedResults);
-      // console.log(data.parsedResults);
-      // if (data.parsedResults && data.parsedResults.length > 0) {
-      //   let tmpdata = [];
-      //   for (let i = 0; i < data.parsedResults.length; i++) {
-      //     let current = data.parsedResults[i];
-      //     let currentSpecs = current.split("\n");
-      //     if (currentSpecs.length == 8) {
-      //       tmpdata.push(currentSpecs.map((str: string) => str.substring(str.indexOf(":") + 1)))
-      //     } else {
-      //       console.log(currentSpecs)
-      //       // something is missing from the table
-      //     }
-      //   }
-      //   setTableData(tmpdata);
-      // }
+      setPrompts(data.parsedResults);      
 
       /** Reset file input */
       fileInput.type = "text";
@@ -131,7 +130,8 @@ const MultipleFileUploadForm = () => {
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      alert("Sorry! something went wrong.");
+      setStatusTxt("Sorry! something went wrong.");
+      setAlertOpen(true);
       setIsLoading(false);
     }
   };
@@ -139,6 +139,7 @@ const MultipleFileUploadForm = () => {
 
   return (
     <div>
+      <AlertComponent open={alertOpen} message={statusTxt}/>
       {isLoading === true && <Loading message={statusTxt} />}
       <form
         className="w-full p-3 border border-gray-500 border-dashed"
@@ -146,15 +147,14 @@ const MultipleFileUploadForm = () => {
       >
         {previewUrls.length > 0 ? (
           <>
-            <button
+            <Button
               onClick={() => {
                 setPreviewUrls([])
                 setTableData([])
-              }}
-              className="mb-3 text-sm font-medium text-gray-500 transition-colors duration-300 hover:text-gray-900"
+              }}              
             >
               Clear Previews
-            </button>
+            </Button>
 
             <div className="flex flex-wrap justify-start">
               {previewUrls.map((previewUrl, idx) => (
