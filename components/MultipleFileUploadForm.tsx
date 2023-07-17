@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { ChangeEvent, useState } from "react";
-
+import InformationTable from "./InformationTable";
 const MultipleFileUploadForm = () => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<unknown[]>([]);
 
   const onFilesUploadChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const fileInput = e.target;
@@ -40,23 +41,38 @@ const MultipleFileUploadForm = () => {
   
         const {
           data,
+          parsedResults,
           error,
         }: {
           data: {
             url: string | string[];
+            parsedResults: [];
           } | null;
           error: string | null;
         } = await res.json();
-  
+        
         if (error || !data) {
           alert(error || "Sorry! something went wrong.");
           return;
         }
-  
+        
         setPreviewUrls(
           validFiles.map((validFile) => URL.createObjectURL(validFile))
         ); // we will use this to show the preview of the images
-  
+        //set table data
+        if(parsedResults.length > 0){
+          let tmpdata = [];
+          for(let i =0; i < parsedResults.length; i ++){
+            let current = parsedResults[i];
+            let currentSpecs = current.split("\n");
+            if(currentSpecs.length == 8){
+              tmpdata.push(currentSpecs.map((str:string) => str.substring(str.indexOf(":") + 1)))
+            } else {
+              // something is missing from the table
+            }
+          }
+          setTableData(tmpdata);
+        }  
         /** Reset file input */
         fileInput.type = "text";
         fileInput.type = "file";
@@ -68,6 +84,7 @@ const MultipleFileUploadForm = () => {
       }
   };
 
+  
   return (
     <form
       className="w-full p-3 border border-gray-500 border-dashed"
@@ -121,6 +138,7 @@ const MultipleFileUploadForm = () => {
           />
         </label>
       )}
+      {tableData.length > 0 && <InformationTable data={tableData}/>}
     </form>
   );
 };

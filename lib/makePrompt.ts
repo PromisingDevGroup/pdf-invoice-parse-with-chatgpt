@@ -9,7 +9,9 @@ const makePrompt = (input: unknown) => {
     // Gross Amount
     // Invoice date
     // Due date
-    return "Give me invoice datainvoice number, provider name, customer name, tax amount, net amount, gross amount, invoice date and due date) from the following: Give me English and Spanish version.\""+input+"\""+"\n"
+
+    // Give me English and Spanish version. --- no need
+    return "Give me invoice data: invoice number, provider name, customer name, tax amount, net amount, gross amount, invoice date and due date) from the following: Give me an English version: \""+input+"\""+"\n"
 }
 
 export default makePrompt
