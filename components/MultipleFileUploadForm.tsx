@@ -1,13 +1,59 @@
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import InformationTable from "./InformationTable";
+import Loading from "./Loading";
 const MultipleFileUploadForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [statusTxt, setStatusTxt] = useState("Please start!")
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [tableData, setTableData] = useState<unknown[]>([]);
+  const [prompts, setPrompts] = useState<string[]>([]);
+  useEffect(() => {
+    if (prompts.length > 0) {
+      setIsLoading(true);
+      setStatusTxt("sending prompts to AI")
+      let tmp:string[] = [];
+      const fetachData = async() => {
+        for(let i =0; i < prompts.length; i++){
+          const res = await fetch("/api/parse", {
+            method: "POST",
+            body: prompts[i],
+          });
+          const data = await res.json();
+          // console.log(data.parsed);
+          if (data.parsed) {
+            let currentSpecs = data.parsed.split("\n")
+            currentSpecs = currentSpecs.map((str: string) => str.substring(str.indexOf(":") + 1));
+            // let tmp = tableData;
+            tmp.push(currentSpecs);
+            if (tmp.length === prompts.length) {
+              setTableData(tmp);
+              setStatusTxt("Got the result")
+              setIsLoading(false);
+            }
+          } else {
+            setStatusTxt("Error Occured")
+            alert("Something went wrong!")
+            setIsLoading(false);
+          }
+        }
+      }
+      fetachData()
+      
+    }
+  }, [prompts])
+
+  const getAIData = () => {
+    if(prompts.length < 1){
+      alert("No prompts to send")
+      return;
+    }
+
+  }
 
   const onFilesUploadChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
     const fileInput = e.target;
 
     if (!fileInput.files) {
@@ -33,6 +79,7 @@ const MultipleFileUploadForm = () => {
     }
 
     try {
+      setStatusTxt("uploading and converting pdf to text")
       var formData = new FormData();
       validFiles.forEach((file) => formData.append("media", file));
 
@@ -46,8 +93,8 @@ const MultipleFileUploadForm = () => {
         error,
       }: {
         data: {
-          url: string | string[];    
-          parsedResults: string[];      
+          url: string | string[];
+          parsedResults: string[];
         } | null;
         error: string | null;
       } = await res.json();
@@ -56,40 +103,44 @@ const MultipleFileUploadForm = () => {
         alert(error || "Sorry! something went wrong.");
         return;
       }
+      setStatusTxt("pdf loaded and parsed")
 
       setPreviewUrls(
         validFiles.map((validFile) => URL.createObjectURL(validFile))
       ); // we will use this to show the preview of the images
       //set table data
-      console.log(data.parsedResults);
-      if (data.parsedResults && data.parsedResults.length > 0) {
-        let tmpdata = [];
-        for (let i = 0; i < data.parsedResults.length; i++) {
-          let current = data.parsedResults[i];
-          let currentSpecs = current.split("\n");
-          if (currentSpecs.length == 8) {
-            tmpdata.push(currentSpecs.map((str: string) => str.substring(str.indexOf(":") + 1)))
-          } else {
-            console.log(currentSpecs)
-            // something is missing from the table
-          }
-        }
-        setTableData(tmpdata);
-      }
+      setPrompts(data.parsedResults);
+      // console.log(data.parsedResults);
+      // if (data.parsedResults && data.parsedResults.length > 0) {
+      //   let tmpdata = [];
+      //   for (let i = 0; i < data.parsedResults.length; i++) {
+      //     let current = data.parsedResults[i];
+      //     let currentSpecs = current.split("\n");
+      //     if (currentSpecs.length == 8) {
+      //       tmpdata.push(currentSpecs.map((str: string) => str.substring(str.indexOf(":") + 1)))
+      //     } else {
+      //       console.log(currentSpecs)
+      //       // something is missing from the table
+      //     }
+      //   }
+      //   setTableData(tmpdata);
+      // }
+
       /** Reset file input */
       fileInput.type = "text";
       fileInput.type = "file";
-
-      console.log("Operation Success:", data);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
       alert("Sorry! something went wrong.");
+      setIsLoading(false);
     }
   };
 
 
   return (
     <div>
+      {isLoading === true && <Loading message={statusTxt} />}
       <form
         className="w-full p-3 border border-gray-500 border-dashed"
         onSubmit={(e) => e.preventDefault()}
