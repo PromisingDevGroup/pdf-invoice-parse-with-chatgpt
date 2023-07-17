@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cypress open"
+    "test": "cypress open",
+    "gpt": "node gpt.js"
   },
   "dependencies": {
     "@types/node": "20.4.2",
