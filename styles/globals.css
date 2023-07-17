@@ -3,3 +3,15 @@
 @tailwind utilities;
 
 
+.spinner {
+    border-top-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    animation: spinner 0.75s linear infinite;
+  }
+  
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
