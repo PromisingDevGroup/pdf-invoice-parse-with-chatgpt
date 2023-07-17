@@ -17,7 +17,6 @@ const Home: NextPage = () => {
           <h1 className="mb-10 text-3xl font-bold text-gray-900">
             Upload your files
           </h1>
-
           <MultipleFileUploadForm />
         </div>
       </main>

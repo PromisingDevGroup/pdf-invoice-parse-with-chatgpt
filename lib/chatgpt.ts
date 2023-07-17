@@ -1,12 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import chatgptapikey from "./chatgptapikey";
 
-
-
-
-
-
-
 const getAIResponse = async (prompt: string) => {
     const configuration = new Configuration({
         apiKey: chatgptapikey,
